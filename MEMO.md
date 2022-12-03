@@ -39,3 +39,27 @@
   - `docker image build --tag my-ubuntu:date .`
 - run built image
   - `docker container run --name my-ubuntu --rm -it my-ubuntu:date vi`
+
+## volume
+
+- mount volume
+  - `docker volume create --name docker-practice-db-volume`
+- check volume
+  - `docker volume ls`
+- run with --volume
+  - `docker container run --name db --rm -d --platform linux/amd64 --env MYSQL_ROOT_PASSWORD=rootpassword --env MYSQL_USER=hoge --env MYSQL_PASSWORD=password --env MYSQL_DATABASE=event --volume docker-practice-db-volume:/var/lib/mysql docker-practice:db`
+- run with --mount
+  - `docker container run --name db --rm -d --platform linux/amd64 --env MYSQL_ROOT_PASSWORD=rootpassword --env MYSQL_USER=hoge --env MYSQL_PASSWORD=password --env MYSQL_DATABASE=event --mount type=volume,src=docker-practice-db-volume,dst=/var/lib/mysql docker-practice:db`
+- inspect volume
+  - `docker volume inspect docker-practice-db-volume`
+- rm volume
+  - `docker volume rm docker-practice-db-volume`
+
+## bind
+
+- bind with --volume
+  - `docker container run --name app --rm -d -it --volume $(pwd)/src:/src docker-practice:app php -S 0.0.0.0:8000 -t /src`
+- bind with --mount
+  - `docker container run --name app --rm -d -it --mount type=bind,src=$(pwd)/src,dst=/src docker-practice:app php -S 0.0.0.0:8000 -t /src`
+- bind with init
+  - `docker container run --name db --rm -d --platform linux/amd64 --env MYSQL_ROOT_PASSWORD=rootpassword --env MYSQL_USER=hoge --env MYSQL_PASSWORD=password --env MYSQL_DATABASE=event --mount type=volume,src=docker-practice-db-volume,dst=/var/lib/mysql --mount type=bind,src=$(pwd)/docker/db/init.sql,dst=/docker-entrypoint-initdb.d/init.sql docker-practice:db`
