@@ -10,7 +10,7 @@ echo '<div style="width: 40rem; margin-top: 2rem; margin-left: auto; margin-righ
           <h1 style="text-align: center;">Mail Form</h1>
           <form action="mail.php" method="post">
             <div style="margin-bottom: 1.5rem;">
-              <input type="email" id="to" name="send_to" maxlength="16" placeholder="Send to" autofocus style="width: 100%; font-size: 1.25rem; padding: 0.375rem;" />
+              <input type="email" id="to" name="send_to" maxlength="32" placeholder="Send to" autofocus style="width: 100%; font-size: 1.25rem; padding: 0.375rem;" />
             </div>
             <div style="margin-bottom: 1.5rem;">
               <input type="text" id="sub" name="subject" maxlength="16" placeholder="Subject" style="width: 100%; font-size: 1.25rem; padding: 0.375rem;" />

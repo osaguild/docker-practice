@@ -63,3 +63,69 @@
   - `docker container run --name app --rm -d -it --mount type=bind,src=$(pwd)/src,dst=/src docker-practice:app php -S 0.0.0.0:8000 -t /src`
 - bind with init
   - `docker container run --name db --rm -d --platform linux/amd64 --env MYSQL_ROOT_PASSWORD=rootpassword --env MYSQL_USER=hoge --env MYSQL_PASSWORD=password --env MYSQL_DATABASE=event --mount type=volume,src=docker-practice-db-volume,dst=/var/lib/mysql --mount type=bind,src=$(pwd)/docker/db/init.sql,dst=/docker-entrypoint-initdb.d/init.sql docker-practice:db`
+
+## port
+
+- publish port
+  - `docker container run --name app --rm -d -it --mount type=bind,src=$(pwd)/src,dst=/src --publish 18000:8000 docker-practice:app php -S 0.0.0.0:8000 -t /src`
+  - `docker container run --name mail --rm -d -it --platform linux/amd64 --publish 18025:8025 mailhog/mailhog:v1.0.1`
+
+## network
+
+- create network
+  - `docker network create docker-practice-network`
+- show network
+  - `docker network ls`
+- run with network
+  - ```
+    docker container run                      \
+    --name app                                \
+    --rm                                      \
+    --detach                                  \
+    --mount type=bind,src=$(pwd)/src,dst=/src \
+    --publish 18000:8000                      \
+    --network docker-practice-network         \
+    docker-practice:app                       \
+    php -S 0.0.0.0:8000 -t /src
+    ```
+  - ```
+    docker container run                                                                     \
+    --name db                                                                                \
+    --rm                                                                                     \
+    --detach                                                                                 \
+    --platform linux/amd64                                                                   \
+    --env MYSQL_ROOT_PASSWORD=rootpassword                                                   \
+    --env MYSQL_USER=hoge                                                                    \
+    --env MYSQL_PASSWORD=password                                                            \
+    --env MYSQL_DATABASE=event                                                               \
+    --mount type=volume,src=docker-practice-db-volume,dst=/var/lib/mysql                     \
+    --mount type=bind,src=$(pwd)/docker/db/init.sql,dst=/docker-entrypoint-initdb.d/init.sql \
+    --network docker-practice-network                                                        \
+    --network-alias db                                                                       \
+    docker-practice:db
+    ```
+  - ```
+    docker container run              \
+    --name mail                       \
+    --rm                              \
+    --detach                          \
+    --platform linux/amd64            \
+    --publish 18025:8025              \
+    --network docker-practice-network \
+    --network-alias mail              \
+    mailhog/mailhog:v1.0.1
+    ```
+- check network
+  - `docker network inspect docker-practice-network | jq '.[].IPAM.Config'`
+  - `docker container inspect app | jq '.[].NetworkSettings.Networks'`
+- ping
+  - `docker container exec -it app ping db -c 3`
+
+## docker compose
+
+- run
+  - `docker-compose up`
+- down
+  - `docker-compose down`
+- run with build
+  - `docker-compose up --build`
